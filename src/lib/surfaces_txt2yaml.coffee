@@ -222,11 +222,11 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			match : (data, result) ->
 				@match_animation_pattern data, result
 		}
-		{
-			test : /^\s*(\d+)pattern(\d+),([^,]+),(.+)$/
-			match : (data, result) ->
-				@match_animation_pattern data, result
-		}
+#		{
+#			test : /^\s*(\d+)pattern(\d+),([^,]+),(.+)$/
+#			match : (data, result) ->
+#				@match_animation_pattern data, result
+#		}
 		{
 			test : /^\s*animation(\d+)\.collision(\d+),([-0-9]+),([-0-9]+),([-0-9]+),([-0-9]+),(.+)$/
 			match : (data, result) ->
