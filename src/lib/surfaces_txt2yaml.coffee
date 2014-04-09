@@ -193,7 +193,7 @@ class SurfacesTxt2Yaml.ScopeParser['surface.alias']
 class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.Base
 	conditions : [
 		{
-			test : /^\s*element(\d+),([^,]+),([^,]+),(\d+),(\d+)$/
+			test : /^\s*element(\d+),([^,]+),([^,]+),([-0-9]+),([-0-9]+)$/
 			match : (data, result) ->
 				@match_element data, result
 		}
@@ -228,7 +228,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				@match_animation_pattern data, result
 		}
 		{
-			test : /^\s*animation(\d+)\.collision(\d+),(\d+),(\d+),(\d+),(\d+),(.+)$/
+			test : /^\s*animation(\d+)\.collision(\d+),([-0-9]+),([-0-9]+),([-0-9]+),([-0-9]+),(.+)$/
 			match : (data, result) ->
 				_is = (result.splice 1, 1)[0]
 				id = 'animation'+_is
@@ -239,7 +239,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				@match_collision data.animations[id], result
 		}
 		{
-			test : /^\s*animation(\d+)\.collisionex(\d+),([^,]+),(rect|ellipse),(\d+),(\d+),(\d+),(\d+)$/
+			test : /^\s*animation(\d+)\.collisionex(\d+),([^,]+),(rect|ellipse),([-0-9]+),([-0-9]+),([-0-9]+),([-0-9]+)$/
 			match : (data, result) ->
 				_is = (result.splice 1, 1)[0]
 				id = 'animation'+_is
@@ -261,12 +261,12 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				@match_collisionex_n data.animations[id], result
 		}
 		{
-			test : /^\s*collision(\d+),(\d+),(\d+),(\d+),(\d+),(.+)$/
+			test : /^\s*collision(\d+),([-0-9]+),([-0-9]+),([-0-9]+),([-0-9]+),(.+)$/
 			match : (data, result) ->
 				@match_collision data, result
 		}
 		{
-			test : /^\s*collisionex(\d+),([^,]+),(rect|ellipse),(\d+),(\d+),(\d+),(\d+)$/
+			test : /^\s*collisionex(\d+),([^,]+),(rect|ellipse),([-0-9]+),([-0-9]+),([-0-9]+),([-0-9]+)$/
 			match : (data, result) ->
 				@match_collisionex_4 data, result
 		}
@@ -276,7 +276,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				@match_collisionex_n data, result
 		}
 		{
-			test : /^\s*point(?:\.(kinoko))?\.(center[xy]),(\d+)$/
+			test : /^\s*point(?:\.(kinoko))?\.(center[xy]),([-0-9]+)$/
 			match : (data, result) ->
 				[id, type, coordinate] = result[1 .. 3]
 				unless data.points?
@@ -289,7 +289,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 					data.points[type] = coordinate
 		}
 		{
-			test : /^\s*point\.basepos\.([xy]),(\d+)$/
+			test : /^\s*point\.basepos\.([xy]),([-0-9]+)$/
 			match : (data, result) ->
 				[type, coordinate] = result[1 .. 2]
 				unless data.points?
@@ -299,7 +299,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				data.points.basepos[type] = coordinate
 		}
 		{
-			test : /^\s*(?:(sakura|kero)\.)?balloon\.(offset[xy]),(\d+)$/
+			test : /^\s*(?:(sakura|kero)\.)?balloon\.(offset[xy]),([-0-9]+)$/
 			match : (data, result) ->
 				[character, type, coordinate] = result[1 .. 3]
 				unless data.balloons?
