@@ -11,6 +11,7 @@ class SurfacesTxt2Yaml.Parser
 		lines = txt.split /\r?\n/
 		scope = null
 		scope_id = null
+		scope_id_str = null
 		in_scope = false
 		scope_begin = null
 		scope_content = []
@@ -27,6 +28,7 @@ class SurfacesTxt2Yaml.Parser
 					else if (result[2] == 'surface') or (result[2] == 'surface.append')
 						scope = 'surface'
 						scope_id = []
+						scope_id_str = result[3]
 						ranges = result[3].split ','
 						for range in ranges
 							range_result = null
@@ -57,10 +59,16 @@ class SurfacesTxt2Yaml.Parser
 				data = scope_parser.parse scope_content, scope_begin
 				if scope_id?
 					if scope_id instanceof Array
+						unless parsed_data[scope][scope_id_str]?
+							parsed_data[scope][scope_id_str] = {}
+						copy data, parsed_data[scope][scope_id_str]
 						for scope_id_value in scope_id
 							unless parsed_data[scope][scope_id_value]?
 								parsed_data[scope][scope_id_value] = {}
-							copy data, parsed_data[scope][scope_id_value]
+							if scope_id.length != 1
+								unless parsed_data[scope][scope_id_value].base?
+									parsed_data[scope][scope_id_value].base = []
+								parsed_data[scope][scope_id_value].base.unshift scope_id_str
 					else
 						unless parsed_data[scope][scope_id]?
 							parsed_data[scope][scope_id] = {}
@@ -69,6 +77,7 @@ class SurfacesTxt2Yaml.Parser
 					copy data, parsed_data[scope]
 				scope = null
 				scope_id = null
+				scope_id_str = null
 				in_scope = false
 				scope_begin = null
 				scope_content = []
@@ -81,7 +90,8 @@ class SurfacesTxt2Yaml.Parser
 			parsed_data.surfaces = parsed_data.surface
 			delete parsed_data.surface
 			for id, surface of parsed_data.surfaces
-				surface.is = id
+				unless isNaN(id)
+					surface.is = id
 		if parsed_data['surface.alias']?
 			parsed_data.aliases = parsed_data['surface.alias']
 			delete parsed_data['surface.alias']
