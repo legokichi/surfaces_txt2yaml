@@ -21,12 +21,21 @@ class SurfacesTxt2Yaml.Parser
 					if parsed_data.charset?
 						throw 'line '+(index + 1)+': charset duplication found'
 					parsed_data.charset = result[1]
-				else if result = line.match /^(?:(descript)|(surface(?:\.append)?)(\d+)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
+				else if result = line.match /^(?:(descript)|(surface(?:\.append)?)([-0-9,]+)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
 					if result[1] == 'descript'
 						scope = 'descript'
 					else if (result[2] == 'surface') or (result[2] == 'surface.append')
 						scope = 'surface'
-						scope_id = result[3]
+						scope_id = []
+						ranges = result[3].split ','
+						for range in ranges
+							range_result = null
+							if range_result = range.match /^(\d+)-(\d+)$/
+								scope_id = scope_id.concat [range_result[1] .. range_result[2]]
+							else if range.match /^\d+$/
+								scope_id.push range
+							else
+								throw 'line '+(index + 1)+':wrong surface range'
 					else
 						scope = result[5]
 						scope_id = result[4]
@@ -47,9 +56,15 @@ class SurfacesTxt2Yaml.Parser
 				scope_parser = new SurfacesTxt2Yaml.ScopeParser[scope]()
 				data = scope_parser.parse scope_content, scope_begin
 				if scope_id?
-					unless parsed_data[scope][scope_id]?
-						parsed_data[scope][scope_id] = {}
-					copy data, parsed_data[scope][scope_id]
+					if scope_id instanceof Array
+						for scope_id_value in scope_id
+							unless parsed_data[scope][scope_id_value]?
+								parsed_data[scope][scope_id_value] = {}
+							copy data, parsed_data[scope][scope_id_value]
+					else
+						unless parsed_data[scope][scope_id]?
+							parsed_data[scope][scope_id] = {}
+						copy data, parsed_data[scope][scope_id]
 				else
 					copy data, parsed_data[scope]
 				scope = null
