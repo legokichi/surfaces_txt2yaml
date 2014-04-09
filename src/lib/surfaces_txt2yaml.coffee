@@ -195,66 +195,37 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 		{
 			test : /^\s*element(\d+),([^,]+),([^,]+),(\d+),(\d+)$/
 			match : (data, result) ->
-				[_is, type, file, x, y] = result[1 .. 5]
-				id = 'element'+_is
-				unless data.elements?
-					data.elements = {}
-				if data.elements[id]?
-					@throw 'element id duplication found'
-				data.elements[id] = {is : _is, type : type, file : file, x : x, y : y}
+				@match_element data, result
 		}
 		{
 			test : /^\s*animation(\d+)\.interval,(.+)$/
 			match : (data, result) ->
-				[_is, interval] = result[1 .. 2]
-				id = 'animation'+_is
-				unless data.animations?
-					data.animations = {}
-				unless data.animations[id]?
-					data.animations[id] = {is : _is}
-				if data.animations[id].interval?
-					@throw 'animation interval duplication found'
-				data.animations[id].interval = interval
+				@match_animation_interval data, result
+		}
+		{
+			test : /^\s*(\d+)interval,(.+)$/
+			match : (data, result) ->
+				@match_animation_interval data, result
 		}
 		{
 			test : /^\s*animation(\d+)\.option,(.+)$/
 			match : (data, result) ->
-				[_is, option] = result[1 .. 2]
-				id = 'animation'+_is
-				unless data.animations?
-					data.animations = {}
-				unless data.animations[id]?
-					data.animations[id] = {is : _is}
-				if data.animations[id].option?
-					@throw 'animation option duplication found'
-				data.animations[id].option = option
+				@match_animation_option data, result
+		}
+		{
+			test : /^\s*(\d+)option,(.+)$/
+			match : (data, result) ->
+				@match_animation_option data, result
 		}
 		{
 			test : /^\s*animation(\d+)\.pattern(\d+),([^,]+),(.+)$/
 			match : (data, result) ->
-				[_is, p_id, type, args_str] = result[1 .. 4]
-				id = 'animation'+_is
-				unless data.animations?
-					data.animations = {}
-				unless data.animations[id]?
-					data.animations[id] = {is : _is}
-				unless data.animations[id].patterns?
-					data.animations[id].patterns = []
-				if data.animations[id].patterns[p_id]?
-					@throw 'animation pattern duplication found'
-				data.animations[id].patterns[p_id] = {is : _is, type : type}
-				args = {}
-				switch type
-					when 'overlay', 'overlayfast', 'reduce', 'replace', 'interpolate', 'asis', 'bind', 'add', 'reduce', 'move'
-						[args.surface, args.wait, args.x, args.y] = args_str.split ','
-					when 'base'
-						[args.surface, args.wait] = args_str.split ','
-					when 'insert', 'start', 'stop'
-						args.animation_id = args_str
-					when 'alternativestart', 'alternativestop'
-						args.animation_ids = args_str.split ','
-				for name, arg of args when arg?
-					data.animations[id].patterns[p_id][name] = arg
+				@match_animation_pattern data, result
+		}
+		{
+			test : /^\s*(\d+)pattern(\d+),([^,]+),(.+)$/
+			match : (data, result) ->
+				@match_animation_pattern data, result
 		}
 		{
 			test : /^\s*animation(\d+)\.collision(\d+),(\d+),(\d+),(\d+),(\d+),(.+)$/
@@ -341,6 +312,58 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 					data.balloons[type] = coordinate
 		}
 	]
+	match_element : (data, result) ->
+		[_is, type, file, x, y] = result[1 .. 5]
+		id = 'element'+_is
+		unless data.elements?
+			data.elements = {}
+		if data.elements[id]?
+			@throw 'element id duplication found'
+		data.elements[id] = {is : _is, type : type, file : file, x : x, y : y}
+	match_animation_interval : (data, result) ->
+		[_is, interval] = result[1 .. 2]
+		id = 'animation'+_is
+		unless data.animations?
+			data.animations = {}
+		unless data.animations[id]?
+			data.animations[id] = {is : _is}
+		if data.animations[id].interval?
+			@throw 'animation interval duplication found'
+		data.animations[id].interval = interval
+	match_animation_option : (data, result) ->
+		[_is, option] = result[1 .. 2]
+		id = 'animation'+_is
+		unless data.animations?
+			data.animations = {}
+		unless data.animations[id]?
+			data.animations[id] = {is : _is}
+		if data.animations[id].option?
+			@throw 'animation option duplication found'
+		data.animations[id].option = option
+	match_animation_pattern : (data, result) ->
+		[_is, p_id, type, args_str] = result[1 .. 4]
+		id = 'animation'+_is
+		unless data.animations?
+			data.animations = {}
+		unless data.animations[id]?
+			data.animations[id] = {is : _is}
+		unless data.animations[id].patterns?
+			data.animations[id].patterns = []
+		if data.animations[id].patterns[p_id]?
+			@throw 'animation pattern duplication found'
+		data.animations[id].patterns[p_id] = {is : _is, type : type}
+		args = {}
+		switch type
+			when 'overlay', 'overlayfast', 'reduce', 'replace', 'interpolate', 'asis', 'bind', 'add', 'reduce', 'move'
+				[args.surface, args.wait, args.x, args.y] = args_str.split ','
+			when 'base'
+				[args.surface, args.wait] = args_str.split ','
+			when 'insert', 'start', 'stop'
+				args.animation_id = args_str
+			when 'alternativestart', 'alternativestop'
+				args.animation_ids = args_str.split ','
+		for name, arg of args when arg?
+			data.animations[id].patterns[p_id][name] = arg
 	match_collision : (data, result) ->
 		[_is, left, top, right, bottom, name] = result[1 .. 6]
 		id = 'collision'+_is
