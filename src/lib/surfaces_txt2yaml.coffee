@@ -234,11 +234,11 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			match : (data, result) ->
 				@match_animation_pattern data, result
 		}
-#		{
-#			test : /^\s*(\d+)pattern(\d+),([^,]+),(.+)$/
-#			match : (data, result) ->
-#				@match_animation_pattern data, result
-#		}
+		{
+			test : /^\s*(\d+)pattern(\d+),([^,]+),([^,]+),([^,]+)(?:,(.+))?$/
+			match : (data, result) ->
+				@match_animation_pattern_old data, result
+		}
 		{
 			test : /^\s*animation(\d+)\.collision(\d+),([-0-9]+),([-0-9]+),([-0-9]+),([-0-9]+),(.+)$/
 			match : (data, result) ->
@@ -370,6 +370,31 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				[args.surface, args.wait, args.x, args.y] = args_str.split ','
 			when 'base'
 				[args.surface, args.wait] = args_str.split ','
+			when 'insert', 'start', 'stop'
+				args.animation_id = 'animation'+args_str
+			when 'alternativestart', 'alternativestop'
+				args.animation_ids = ('animation'+animation_id for animation_id in (args_str.split ','))
+		for name, arg of args when arg?
+			data.animations[id].patterns[p_id][name] = arg
+	match_animation_pattern_old : (data, result) ->
+		[_is, p_id, surface, wait, type, args_str] = result[1 .. 6]
+		id = 'animation'+_is
+		unless data.animations?
+			data.animations = {}
+		unless data.animations[id]?
+			data.animations[id] = {is : _is}
+		unless data.animations[id].patterns?
+			data.animations[id].patterns = []
+		if data.animations[id].patterns[p_id]?
+			@throw 'animation pattern duplication found'
+		data.animations[id].patterns[p_id] = {is : _is, type : type}
+		args = {}
+		switch type
+			when 'overlay', 'overlayfast', 'reduce', 'replace', 'interpolate', 'asis', 'bind', 'add', 'reduce', 'move'
+				[args.surface, args.wait] = [surface, wait]
+				[args.x, args.y] = args_str.split ','
+			when 'base'
+				[args.surface, args.wait] = [surface, wait]
 			when 'insert', 'start', 'stop'
 				args.animation_id = 'animation'+args_str
 			when 'alternativestart', 'alternativestop'
