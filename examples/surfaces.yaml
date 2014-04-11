@@ -5,7 +5,7 @@ descript:
     collision-sort: ascend
     animation-sort: ascend
 surfaces:
-    0:
+    surface0:
         points:
             centerx: 0
             centery: 0
@@ -72,7 +72,7 @@ surfaces:
                 right: 90
                 bottom: 110
         is: 0
-    1:
+    surface1:
         points:
             centerx: 0
             centery: 0
@@ -116,12 +116,12 @@ surfaces:
                 is: 1
                 interval: never
                 patterns:
-                    - {is: 1, type: start, animation_id: 0}
+                    - {is: 1, type: start, animation_id: animation0}
             animation2:
                 is: 2
                 interval: never
                 patterns:
-                    - {is: 2, type: alternativestart, animation_ids: [0, 1]}
+                    - {is: 2, type: alternativestart, animation_ids: [animation0, animation1]}
         regions:
             collision0:
                 is: 0
@@ -149,7 +149,7 @@ surfaces:
                 right: 90
                 bottom: 110
         is: 1
-    2:
+    surface2:
         points:
             centerx: 0
             centery: 0
@@ -208,7 +208,7 @@ surfaces:
                 right: 90
                 bottom: 110
         is: 2
-    5:
+    surface5:
         points:
             centerx: 0
             centery: 0
@@ -275,7 +275,7 @@ surfaces:
                 right: 90
                 bottom: 110
         is: 5
-    50:
+    surface50:
         points:
             centerx: 0
             centery: 0

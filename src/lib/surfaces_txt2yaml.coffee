@@ -28,14 +28,15 @@ class SurfacesTxt2Yaml.Parser
 					else if (result[2] == 'surface') or (result[2] == 'surface.append')
 						scope = 'surface'
 						scope_id = []
-						scope_id_str = result[3]
+						scope_id_str = 'surface'+result[3]
 						ranges = result[3].split ','
 						for range in ranges
 							range_result = null
 							if range_result = range.match /^(\d+)-(\d+)$/
-								scope_id = scope_id.concat [range_result[1] .. range_result[2]]
+								for id in [range_result[1] .. range_result[2]]
+									scope_id.push 'surface'+id
 							else if range.match /^\d+$/
-								scope_id.push range
+								scope_id.push 'surface'+range
 							else
 								throw 'line '+(index + 1)+':wrong surface range'
 					else
@@ -90,8 +91,9 @@ class SurfacesTxt2Yaml.Parser
 			parsed_data.surfaces = parsed_data.surface
 			delete parsed_data.surface
 			for id, surface of parsed_data.surfaces
-				unless isNaN(id)
-					surface.is = id
+				result = null
+				if result = id.match /^surface(\d+)$/
+					surface.is = result[1]
 		if parsed_data['surface.alias']?
 			parsed_data.aliases = parsed_data['surface.alias']
 			delete parsed_data['surface.alias']
@@ -369,9 +371,9 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			when 'base'
 				[args.surface, args.wait] = args_str.split ','
 			when 'insert', 'start', 'stop'
-				args.animation_id = args_str
+				args.animation_id = 'animation'+args_str
 			when 'alternativestart', 'alternativestop'
-				args.animation_ids = args_str.split ','
+				args.animation_ids = ('animation'+animation_id for animation_id in (args_str.split ','))
 		for name, arg of args when arg?
 			data.animations[id].patterns[p_id][name] = arg
 	match_collision : (data, result) ->
