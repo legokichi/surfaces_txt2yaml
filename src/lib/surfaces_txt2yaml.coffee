@@ -363,7 +363,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			data.animations[id].patterns = []
 		if data.animations[id].patterns[p_id]?
 			@throw 'animation pattern duplication found'
-		data.animations[id].patterns[p_id] = {is : _is, type : type}
+		data.animations[id].patterns[p_id] = {type : type}
 		args = {}
 		switch type
 			when 'overlay', 'overlayfast', 'reduce', 'replace', 'interpolate', 'asis', 'bind', 'add', 'reduce', 'move'
@@ -387,7 +387,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			data.animations[id].patterns = []
 		if data.animations[id].patterns[p_id]?
 			@throw 'animation pattern duplication found'
-		data.animations[id].patterns[p_id] = {is : _is, type : type}
+		data.animations[id].patterns[p_id] = {type : type}
 		args = {}
 		switch type
 			when 'overlay', 'overlayfast', 'reduce', 'replace', 'interpolate', 'asis', 'bind', 'add', 'reduce', 'move'
