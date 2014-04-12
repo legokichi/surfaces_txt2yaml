@@ -22,14 +22,14 @@ class SurfacesTxt2Yaml.Parser
 					if parsed_data.charset?
 						throw 'line '+(index + 1)+': charset duplication found'
 					parsed_data.charset = result[1]
-				else if result = line.match /^(?:(descript)|(surface(?:\.append)?)([-0-9,]+)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
+				else if result = line.match /^(?:(descript)|(surface(?:\.append)?)((?:\d+-)?\d+(?:,\s*(?:surface)?(?:\d+-)?\d+)*)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
 					if result[1] == 'descript'
 						scope = 'descript'
 					else if (result[2] == 'surface') or (result[2] == 'surface.append')
 						scope = 'surface'
 						scope_id = []
 						scope_id_str = 'surface'+result[3]
-						ranges = result[3].split ','
+						ranges = result[3].split /,\s*(?:surface)?/
 						for range in ranges
 							range_result = null
 							if range_result = range.match /^(\d+)-(\d+)$/
