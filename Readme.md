@@ -29,6 +29,10 @@ or use this on the browsers ...
 
 surfaces\_txt2yaml command currently supports only utf-8 input/output. If you want to input Shift_JIS text, use [encoding.js](https://github.com/polygonplanet/encoding.js) or some other text encoding libraries.
 
+## Demo
+
+http://narazaka.github.io/surfaces_txt2yaml/
+
 ## APIs
 
 ### yaml = SurfacesTxt2Yaml.txt_to_yaml(txt_str)
