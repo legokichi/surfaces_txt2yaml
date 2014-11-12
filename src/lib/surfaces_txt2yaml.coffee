@@ -22,23 +22,32 @@ class SurfacesTxt2Yaml.Parser
 					if parsed_data.charset?
 						throw 'line '+(index + 1)+': charset duplication found'
 					parsed_data.charset = result[1]
-				else if result = line.match /^\s*(?:(descript)|(surface(?:\.append)?)((?:\d+-)?\d+(?:,\s*(?:surface)?(?:\d+-)?\d+)*)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
+				else if result = line.match /^\s*(?:(descript)|(surface(?:\.append)?)(!?(?:\d+-)?\d+(?:,\s*(?:surface|!)?(?:\d+-)?\d+)*)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
 					if result[1] == 'descript'
 						scope = 'descript'
 					else if (result[2] == 'surface') or (result[2] == 'surface.append')
 						scope = 'surface'
-						scope_id = []
+						scope_id_uniq = {}
+						scope_id_delete = {}
 						scope_id_str = 'surface'+result[3]
 						ranges = result[3].split /,\s*(?:surface)?/
 						for range in ranges
 							range_result = null
 							if range_result = range.match /^(\d+)-(\d+)$/
 								for id in [range_result[1] .. range_result[2]]
-									scope_id.push 'surface'+id
+									scope_id_uniq['surface'+id] = true
 							else if range.match /^\d+$/
-								scope_id.push 'surface'+range
+								scope_id_uniq['surface'+range] = true
+							else if range_result = range.match /^!(\d+)-(\d+)$/
+								for id in [range_result[1] .. range_result[2]]
+									scope_id_delete['surface'+id] = true
+							else if range_result = range.match /^!(\d+)$/
+								scope_id_delete['surface'+range_result[1]] = true
 							else
 								throw 'line '+(index + 1)+':wrong surface range'
+						for id of scope_id_delete
+							delete scope_id_uniq[id]
+						scope_id = Object.keys scope_id_uniq
 					else
 						scope = result[5]
 						scope_id = result[4]
