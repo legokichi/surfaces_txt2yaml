@@ -1,3 +1,4 @@
+### (C) 2014 Narazaka : Licensed under The MIT License - http://narazaka.net/license/MIT?2014 ###
 clone = (src) ->
 	if not src? or typeof src isnt 'object'
 		return src
