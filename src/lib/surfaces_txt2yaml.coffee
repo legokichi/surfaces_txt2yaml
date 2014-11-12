@@ -45,8 +45,12 @@ class SurfacesTxt2Yaml.Parser
 								scope_id_delete['surface'+range_result[1]] = true
 							else
 								throw 'line '+(index + 1)+':wrong surface range'
-						for id of scope_id_delete
-							delete scope_id_uniq[id]
+						for scope_id_value of scope_id_delete
+							delete scope_id_uniq[scope_id_value]
+						if result[2] == 'surface.append'
+							for scope_id_value of scope_id_uniq
+								unless parsed_data[scope][scope_id_value]?
+									delete scope_id_uniq[scope_id_value]
 						scope_id = Object.keys scope_id_uniq
 					else
 						scope = result[5]
