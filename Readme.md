@@ -27,7 +27,17 @@ or use this on the browsers ...
     ...
     var yaml = SurfacesTxt2Yaml.txt_to_yaml(txt_str);
 
-surfaces\_txt2yaml command currently supports only utf-8 input/output (because shift\_jis support requires [iconv](https://github.com/bnoordhuis/node-iconv), but sometimes problems will occur when installing it to Windows under some environments).
+surfaces\_txt2yaml command currently supports only utf-8 input/output. If you want to input Shift_JIS text, use [encoding.js](https://github.com/polygonplanet/encoding.js) or some other text encoding libraries.
+
+## APIs
+
+### yaml = SurfacesTxt2Yaml.txt_to_yaml(txt_str)
+
+convert surfaces.txt format string to surfaces.yaml format string
+
+### obj = SurfacesTxt2Yaml.txt_to_data(txt_str)
+
+convert surfaces.txt format string to surfaces.yaml like object
 
 ## surfaces.yaml
 
