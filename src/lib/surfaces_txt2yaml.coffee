@@ -18,11 +18,11 @@ class SurfacesTxt2Yaml.Parser
 		for line, index in lines
 			result = null
 			if not in_scope
-				if result = line.match /^charset,(.+)$/
+				if result = line.match /^\s*charset,(.+)$/
 					if parsed_data.charset?
 						throw 'line '+(index + 1)+': charset duplication found'
 					parsed_data.charset = result[1]
-				else if result = line.match /^(?:(descript)|(surface(?:\.append)?)((?:\d+-)?\d+(?:,\s*(?:surface)?(?:\d+-)?\d+)*)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
+				else if result = line.match /^\s*(?:(descript)|(surface(?:\.append)?)((?:\d+-)?\d+(?:,\s*(?:surface)?(?:\d+-)?\d+)*)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/
 					if result[1] == 'descript'
 						scope = 'descript'
 					else if (result[2] == 'surface') or (result[2] == 'surface.append')
@@ -45,7 +45,7 @@ class SurfacesTxt2Yaml.Parser
 					if result[result.length - 1] == '{'
 						in_scope = true
 						scope_begin = index + 1
-				else if result = line.match /^{\s*$/
+				else if result = line.match /^\s*{\s*$/
 					if scope?
 						in_scope = true
 						scope_begin = index + 1
@@ -53,7 +53,7 @@ class SurfacesTxt2Yaml.Parser
 						throw 'line '+(index + 1)+':scope bracket begun before scope name'
 				else if not line.match /^\s*\/\/|^\s*$/ # comment or empty line
 					console.warn 'line '+(index + 1)+': invalid line found in scope outside : '+line
-			else if result = line.match /^}\s*$/
+			else if result = line.match /^\s*}\s*$/
 				unless parsed_data[scope]?
 					parsed_data[scope] = {}
 				scope_parser = new SurfacesTxt2Yaml.ScopeParser[scope]()
