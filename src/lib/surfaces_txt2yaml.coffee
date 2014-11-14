@@ -84,7 +84,7 @@ class SurfacesTxt2Yaml.Parser
 								unless parsed_data[scope][scope_id_value].base?
 									parsed_data[scope][scope_id_value].base = []
 								if -1 == parsed_data[scope][scope_id_value].base.indexOf scope_id_str
-									parsed_data[scope][scope_id_value].base.unshift scope_id_str
+									parsed_data[scope][scope_id_value].base.push scope_id_str
 					else
 						unless parsed_data[scope][scope_id]?
 							parsed_data[scope][scope_id] = {}
