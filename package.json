@@ -1,6 +1,6 @@
 {
   "name": "surfaces_txt2yaml",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "surfaces.txt -> surfaces.yaml",
   "homepage": "",
   "main": "index.js",
