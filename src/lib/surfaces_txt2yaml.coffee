@@ -505,7 +505,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			when 'overlay', 'overlayfast', 'reduce', 'replace', 'interpolate', 'asis', 'bind', 'add', 'reduce', 'move'
 				[args.surface, args.wait, args.x, args.y] = args_str.split ','
 				if args.surface? then args.surface -= 0
-				if args.wait? and (args.wait - 0) == args.wait then args.wait -= 0
+				if args.wait? and not isNaN(args.wait) then args.wait -= 0
 				if args.x? then args.x -= 0
 				if args.y? then args.y -= 0
 			when 'base'
@@ -542,6 +542,8 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				[args.surface, args.wait] = [surface, wait * 10]
 				if args_str
 					[args.x, args.y] = args_str.split ','
+					if args.x? then args.x -= 0
+					if args.y? then args.y -= 0
 			when 'base'
 				[args.surface, args.wait] = [surface, wait * 10]
 			when 'insert', 'start', 'stop'
