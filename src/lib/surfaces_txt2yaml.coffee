@@ -511,7 +511,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			when 'base'
 				[args.surface, args.wait] = args_str.split ','
 				if args.surface? then args.surface -= 0
-				if args.wait? and (args.wait - 0) == args.wait then args.wait -= 0
+				if args.wait? and not isNaN(args.wait) then args.wait -= 0
 			when 'insert', 'start', 'stop'
 				args.animation_id = 'animation'+args_str
 			when 'alternativestart', 'alternativestop'
@@ -524,7 +524,10 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 		_is -= 0
 		p_id -= 0
 		surface -= 0
-		wait *= 10
+		if wait_result = wait.match /(\d+)-(\d+)/
+			wait = (wait_result[1] * 10) + '-' + (wait_result[2] * 10)
+		else
+			wait *= 10
 		id = 'animation'+_is
 		unless data.animations?
 			data.animations = {}
