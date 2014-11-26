@@ -74,6 +74,10 @@ common: surfaces_txt2yaml -c ssp-lazy -o surfaces.yaml surfaces.txt
 ]
 .run()
 
+unless args.targets.length
+	argv.help()
+	process.exit()
+
 txt_str = ''
 for file in args.targets
 	txt_str += fs.readFileSync file, 'utf8'

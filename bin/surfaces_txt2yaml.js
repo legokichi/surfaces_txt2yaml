@@ -67,6 +67,11 @@
     }
   ]).run();
 
+  if (!args.targets.length) {
+    argv.help();
+    process.exit();
+  }
+
   txt_str = '';
 
   _ref = args.targets;
