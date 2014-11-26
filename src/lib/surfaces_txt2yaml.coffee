@@ -140,7 +140,7 @@ class SurfacesTxt2Yaml.Parser
 
 SurfacesTxt2Yaml.ScopeParser = {}
 
-class SurfacesTxt2Yaml.ScopeParser.Base
+class SurfacesTxt2Yaml.ScopeParser.Multiple
 	constructor : () ->
 		
 	parse : (lines, index_offset) ->
@@ -165,59 +165,52 @@ class SurfacesTxt2Yaml.ScopeParser.Base
 	throw : (message) ->
 		throw 'line '+(@index_offset + @index + 1)+': '+message
 
-class SurfacesTxt2Yaml.ScopeParser.descript
+class SurfacesTxt2Yaml.ScopeParser.Single
 	constructor : () ->
-		
 	parse : (lines, index_offset) ->
+		@index_offset = index_offset
 		data = {}
 		for line, index in lines
+			@index = index
 			result = null
-			if result = line.match /^\s*(maxwidth|version|collision-sort|animation-sort),(.+)$/
-				data[result[1]] = result[2]
+			match = false
+			if result = line.match @condition.test
+				@condition.match.call @, data, result
 			else if not line.match /^\s*\/\/|^\s*$/ # comment or empty line
-				console.warn 'line '+(index_offset + index + 1)+': invalid line found in scope inside : '+line
+				@warn 'invalid line found in scope inside : '+line
+		delete @index_offset
+		delete @index
 		data
+	warn : (message) ->
+		console.warn 'line '+(@index_offset + @index + 1)+': '+message
+	throw : (message) ->
+		throw 'line '+(@index_offset + @index + 1)+': '+message
 
-class SurfacesTxt2Yaml.ScopeParser.tooltips
-	constructor : () ->
-		
-	parse : (lines, index_offset) ->
-		data = {}
-		for line, index in lines
-			result = null
-			if result = line.match /^\s*([^,]+),(.+)$/
-				data[result[1]] = result[2]
-			else if not line.match /^\s*\/\/|^\s*$/ # comment or empty line
-				console.warn 'line '+(index_offset + index + 1)+': invalid line found in scope inside : '+line
-		data
+class SurfacesTxt2Yaml.ScopeParser.descript extends SurfacesTxt2Yaml.ScopeParser.Single
+	condition:
+		test: /^\s*(maxwidth|version|collision-sort|animation-sort),(.+)$/
+		match: (data, result) ->
+			data[result[1]] = result[2]
 
-class SurfacesTxt2Yaml.ScopeParser.cursor
-	constructor : () ->
-		
-	parse : (lines, index_offset) ->
-		data = {}
-		for line, index in lines
-			result = null
-			if result = line.match /^\s*(mouseup|mousedown)(\d+),([^,]+),(.+)$/
-				data[result[1]] = {region_id : result[3], file : result[4]}
-			else if not line.match /^\s*\/\/|^\s*$/ # comment or empty line
-				console.warn 'line '+(index_offset + index + 1)+': invalid line found in scope inside : '+line
-		data
+class SurfacesTxt2Yaml.ScopeParser.tooltips extends SurfacesTxt2Yaml.ScopeParser.Single
+	condition:
+		test: /^\s*([^,]+),(.+)$/
+		match: (data, result) ->
+			data[result[1]] = result[2]
 
-class SurfacesTxt2Yaml.ScopeParser['surface.alias']
-	constructor : () ->
-		
-	parse : (lines, index_offset) ->
-		data = {}
-		for line, index in lines
-			result = null
-			if result = line.match /^\s*([^,]+),\[(.+)\]$/
-				data[result[1]] = result[2].split /\s*,\s*/
-			else if not line.match /^\s*\/\/|^\s*$/ # comment or empty line
-				console.warn 'line '+(index_offset + index + 1)+': invalid line found in scope inside : '+line
-		data
+class SurfacesTxt2Yaml.ScopeParser.cursor extends SurfacesTxt2Yaml.ScopeParser.Single
+	condition:
+		test: /^\s*(mouseup|mousedown)(\d+),([^,]+),(.+)$/
+		match: (data, result) ->
+			data[result[1]] = {region_id : result[3], file : result[4]}
 
-class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.Base
+class SurfacesTxt2Yaml.ScopeParser['surface.alias'] extends SurfacesTxt2Yaml.ScopeParser.Single
+	condition:
+		test: /^\s*([^,]+),\[(.+)\]$/
+		match: (data, result) ->
+			data[result[1]] = result[2].split /\s*,\s*/
+
+class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.Multiple
 	conditions : [
 		{
 			test : /^\s*element(\d+),([^,]+),([^,]+),([-0-9]+),([-0-9]+)$/
