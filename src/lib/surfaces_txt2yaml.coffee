@@ -140,31 +140,6 @@ class SurfacesTxt2Yaml.Parser
 
 SurfacesTxt2Yaml.ScopeParser = {}
 
-class SurfacesTxt2Yaml.ScopeParser.Multiple
-	constructor : () ->
-		
-	parse : (lines, index_offset) ->
-		@index_offset = index_offset
-		data = {}
-		for line, index in lines
-			@index = index
-			result = null
-			match = false
-			for condition in @conditions
-				if result = line.match condition.test
-					condition.match.call @, data, result
-					match = true
-					break
-			if not match and not line.match /^\s*\/\/|^\s*$/ # comment or empty line
-				@warn 'invalid line found in scope inside : '+line
-		delete @index_offset
-		delete @index
-		data
-	warn : (message) ->
-		console.warn 'line '+(@index_offset + @index + 1)+': '+message
-	throw : (message) ->
-		throw 'line '+(@index_offset + @index + 1)+': '+message
-
 class SurfacesTxt2Yaml.ScopeParser.Single
 	constructor : () ->
 	parse : (lines, index_offset) ->
@@ -185,6 +160,25 @@ class SurfacesTxt2Yaml.ScopeParser.Single
 		console.warn 'line '+(@index_offset + @index + 1)+': '+message
 	throw : (message) ->
 		throw 'line '+(@index_offset + @index + 1)+': '+message
+
+class SurfacesTxt2Yaml.ScopeParser.Multiple extends SurfacesTxt2Yaml.ScopeParser.Single
+	parse : (lines, index_offset) ->
+		@index_offset = index_offset
+		data = {}
+		for line, index in lines
+			@index = index
+			result = null
+			match = false
+			for condition in @conditions
+				if result = line.match condition.test
+					condition.match.call @, data, result
+					match = true
+					break
+			if not match and not line.match /^\s*\/\/|^\s*$/ # comment or empty line
+				@warn 'invalid line found in scope inside : '+line
+		delete @index_offset
+		delete @index
+		data
 
 class SurfacesTxt2Yaml.ScopeParser.descript extends SurfacesTxt2Yaml.ScopeParser.Single
 	condition:
