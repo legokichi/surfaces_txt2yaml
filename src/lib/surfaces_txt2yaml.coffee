@@ -515,7 +515,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			when 'insert', 'start', 'stop'
 				args.animation_id = 'animation'+args_str.match(/\[?(.*)\]?/)[1]
 			when 'alternativestart', 'alternativestop'
-				args.animation_ids = ('animation'+animation_id for animation_id in (args_str.match(/\(?(.*)\)?/)[1].split ','))
+				args.animation_ids = ('animation'+animation_id for animation_id in (args_str.match(/[\(\[]?(.*)[\]\)]?/)[1].split /[.,]/))
 		for name, arg of args when arg?
 			data.animations[id].patterns[p_id][name] = arg
 		true
