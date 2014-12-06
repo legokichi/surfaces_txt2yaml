@@ -114,7 +114,7 @@ class SurfacesTxt2Yaml.Parser
 						for scope_id_value in scope_id
 							unless parsed_data[scope][scope_id_value]?
 								parsed_data[scope][scope_id_value] = {}
-							if scope_id.length != 1
+							if scope_id_str != scope_id_value
 								unless parsed_data[scope][scope_id_value].base?
 									parsed_data[scope][scope_id_value].base = []
 								if -1 == parsed_data[scope][scope_id_value].base.indexOf scope_id_str
