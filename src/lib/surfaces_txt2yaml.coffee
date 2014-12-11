@@ -370,6 +370,17 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				@match_collisionex_4 data.animations[id], result
 		}
 		{
+			test : /^\s*animation(\d+)\.collisionex(\d+),([^,]+),(circle),([-0-9]+),([-0-9]+),([-0-9]+)$/
+			match : (data, result) ->
+				_is = (result.splice 1, 1)[0] - 0
+				id = 'animation'+_is
+				unless data.animations?
+					data.animations = {}
+				unless data.animations[id]?
+					data.animations[id] = {is : _is}
+				@match_collisionex_3 data.animations[id], result
+		}
+		{
 			test : /^\s*animation(\d+)\.collisionex(\d+),([^,]+),polygon,(.+)$/
 			match : (data, result) ->
 				_is = (result.splice 1, 1)[0] - 0
@@ -389,6 +400,11 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 			test : /^\s*collisionex(\d+),([^,]+),(rect|ellipse),([-0-9]+),([-0-9]+),([-0-9]+),([-0-9]+)$/
 			match : (data, result) ->
 				@match_collisionex_4 data, result
+		}
+		{
+			test : /^\s*collisionex(\d+),([^,]+),(circle),([-0-9]+),([-0-9]+),([-0-9]+)$/
+			match : (data, result) ->
+				@match_collisionex_3 data, result
 		}
 		{
 			test : /^\s*collisionex(\d+),([^,]+),polygon,(.+)$/
@@ -591,6 +607,22 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				id = 'collision' + ++_is
 			@warnthrow ' replace to : ' + _is, @options.check_surface_scope_duplication
 		data.regions[id] = {is : _is, type : type, name : name, left : left, top : top, right : right, bottom : bottom}
+		true
+	match_collisionex_3 : (data, result) ->
+		[_is, name, type, center_x, center_y, radius] = result[1 .. 7]
+		_is -= 0
+		center_x -= 0
+		center_y -= 0
+		radius -= 0
+		id = 'collision'+_is
+		unless data.regions?
+			data.regions = {}
+		if data.regions[id]?
+			@warnthrow 'collisionex duplication found : ' + _is, @options.check_surface_scope_duplication
+			while data.regions[id]?
+				id = 'collision' + ++_is
+			@warnthrow ' replace to : ' + _is, @options.check_surface_scope_duplication
+		data.regions[id] = {is : _is, type : type, name : name, center_x: center_x, center_y: center_y, radius: radius}
 		true
 	match_collisionex_n : (data, result) ->
 		[_is, name, coordinates_str] = result[1 .. 3]
