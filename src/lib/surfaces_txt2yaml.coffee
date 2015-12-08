@@ -49,12 +49,12 @@ class SurfacesTxt2Yaml.Parser
 			@index = index
 			result = null
 			if not in_scope
-				if @options.charset and result = line.match /^\s*charset,(.+)$/
+				if @options.charset and result = line.match /^\s*charset\s*,\s*(.+)$/
 					if parsed_data.charset?
 						@throw 'charset duplication found'
 					parsed_data.charset = result[1]
 				else if (
-					(@options.surface_definition == 'materia' and result = line.match /^(?:(descript)|(surface)(\d+(?:,surface\d+)*)|(sakura|kero\d+)\.(surface\.alias))\s*({)?\s*$/) or
+					(@options.surface_definition == 'materia' and result = line.match /^(?:(descript)|(surface)(\d+(?:,\s*surface\d+)*)|(sakura|kero\d+)\.(surface\.alias))\s*({)?\s*$/) or
 					(@options.surface_definition == 'ssp' and result = line.match /^\s*(?:(descript)|(surface(?:\.append)?)(!?(?:\d+-)?\d+(?:\s*,\s*(?:surface|!)?(?:\d+-)?\d+)*)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/) or
 					(@options.surface_definition == 'ssp-lazy' and result = line.match /^\s*(?:(descript)|(surface(?:\.append)?)(.+)|(sakura|kero|char\d+)\.(surface\.alias|cursor|tooltips))\s*({)?\s*$/)
 				)
@@ -340,7 +340,7 @@ class SurfacesTxt2Yaml.ScopeParser.surface extends SurfacesTxt2Yaml.ScopeParser.
 				@match_animation_pattern data, result
 		}
 		{
-			test : /^\s*(\d+)pattern(\d+)\s*,\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^,]+)(?:,(.+))?$/ # SERIKO/1
+			test : /^\s*(\d+)pattern(\d+)\s*,\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^,]+)(?:,\s*(.+))?$/ # SERIKO/1
 			match : (data, result) ->
 				if @options.check_seriko and @seriko_version == 1
 					@warnthrow 'not SERIKO/2.0 definition : ' + result[0], @options.check_seriko
