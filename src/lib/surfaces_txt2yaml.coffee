@@ -51,7 +51,7 @@ class SurfacesTxt2Yaml.Parser
 			if not in_scope
 				if @options.charset and result = line.match /^\s*charset\s*,\s*(.+)$/
 					if parsed_data.charset?
-						@throw 'charset duplication found'
+						@warnthrow 'charset duplication found'
 					parsed_data.charset = result[1]
 				else if (
 					(@options.surface_definition == 'materia' and result = line.match /^(?:(descript)|(surface)(\d+(?:,\s*surface\d+)*)|(sakura|kero\d+)\.(surface\.alias))\s*({)?\s*$/) or
